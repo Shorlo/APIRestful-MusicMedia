@@ -32,7 +32,39 @@ const testUser = (request, response) =>
      });
 }
 
+// Endpoints
+
+// RegisterUser
+const registerUser = (request, response) =>
+{
+     // Get params from request
+
+     // Check params
+
+     // Validate params
+
+     // Duplicate user control
+
+     // Encode password
+
+     // Create User object
+
+     // Save user in database
+
+     // Clean object to return
+
+     // Return response
+
+
+     return response.status(200).send
+     ({
+          status: 'Success',
+          message: 'User registered successfuly.'
+     });
+}
+
 module.exports = 
 {
-     testUser
+     testUser,
+     registerUser
 }

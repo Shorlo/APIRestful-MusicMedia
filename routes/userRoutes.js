@@ -33,6 +33,7 @@ const UserController = require('../controllers/userController');
 
 // Define routes
 router.get('/testUser', UserController.testUser);
+router.post('/registerUser', UserController.registerUser);
 
 // Export router
 module.exports = router;
