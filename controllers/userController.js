@@ -22,6 +22,8 @@
 |                                                                               |
 '==============================================================================*/
 
+const validate = require('../helpers/validate');
+
 // Test endpoint
 const testUser = (request, response) =>
 {
@@ -51,6 +53,19 @@ const registerUser = (request, response) =>
      }
 
      // Validate params
+     try
+     {
+          validate(params);
+     }
+     catch(error)
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Validate failed.'
+          });
+     }
+
 
      // Duplicate user control
 
