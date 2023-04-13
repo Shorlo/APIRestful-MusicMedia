@@ -50,7 +50,15 @@ app.use(express.urlencoded({extended: true}));
 
 
 // Check route
-
+app.get('/testRoute', (request, response) =>
+{
+    return response.status(200).send
+    ({
+        id: 0,
+        name: 'Javier',
+        surname: 'Sainz de Baranda'
+    });
+});
 
 // Put server to listen http request
 app.listen(PORT, () =>
