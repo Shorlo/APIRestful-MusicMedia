@@ -1,4 +1,4 @@
-/*  APIRESTFUL-MUSICMEDIA/index.js
+/*  APIRESTFUL-MUSICMEDIA/routes/songRoutes.js
        ____     __           _           _____        __
       / __/_ __/ /  ___ ____(_)__  ___  / ___/__  ___/ /__
  ___ _\ \/ // / _ \/ -_) __/ / _ `/ _ \/ /__/ _ \/ _  / -_)_____________________
@@ -22,54 +22,17 @@
 |                                                                               |
 '==============================================================================*/
 
-// Import database
-const connection = require('./database/connection');
-
-// Import dependencies
+// Dependencies
 const express = require('express');
-const cors = require('cors');
 
-// Welcome message
-console.log('Loading ApiRestful MusicMedia');
+// Load router
+const router = express.Router();
 
-// Database connection
-connection();
+// Import controller
+const SongController = require('../controllers/songController');
 
-// Build node server
-const app = express();
-const PORT = 3901;
+// Define routes
+router.get('/testSong', SongController.testSong);
 
-// Cors configuration
-app.use(cors());
-
-// Convert body data to js objects
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
-
-// Load routes
-const UserRoutes = require('./routes/userRoutes');
-const SongRoutes = require('./routes/songRoutes');
-const ArtistRoutes = require('./routes/artistRoutes');
-const AlbumRoutes = require('./routes/albumRoutes');
-
-app.use('/api/user', UserRoutes);
-app.use('/api/song', SongRoutes);
-app.use('/api/artist', ArtistRoutes);
-app.use('/api/album', AlbumRoutes);
-
-// Check route
-app.get('/testRoute', (request, response) =>
-{
-    return response.status(200).send
-    ({
-        id: 0,
-        name: 'Javier',
-        surname: 'Sainz de Baranda'
-    });
-});
-
-// Put server to listen http request
-app.listen(PORT, () =>
-{
-    console.log(`Server running at Port: ${PORT}`);
-});
+// Export router
+module.exports = router;
