@@ -26,22 +26,25 @@
 const connection = require('./database/connection');
 
 // Import dependencies
-
+const express = require('express');
+const cors = require('cors');
 
 // Welcome message
-
+console.log('Loading ApiRestful MusicMedia');
 
 // Database connection
 connection();
 
 // Build node server
-
+const app = express();
+const PORT = 3901;
 
 // Cors configuration
-
+app.use(cors());
 
 // Convert body data to js objects
-
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
 // Load routes
 
@@ -50,4 +53,7 @@ connection();
 
 
 // Put server to listen http request
-
+app.listen(PORT, () =>
+{
+    console.log(`Server running at Port: ${PORT}`);
+});
