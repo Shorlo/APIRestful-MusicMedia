@@ -1,2 +1,2 @@
 # APIRestful-MusicMedia
-This is a backend of a music media library
+This is a backend for a music media library
