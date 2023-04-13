@@ -1,4 +1,4 @@
-/*  APIRESTFUL-MUSICMEDIA/index.js
+/*  APIRESTFUL-MUSICMEDIA/database/connection.js
        ____     __           _           _____        __
       / __/_ __/ /  ___ ____(_)__  ___  / ___/__  ___/ /__
  ___ _\ \/ // / _ \/ -_) __/ / _ `/ _ \/ /__/ _ \/ _  / -_)_____________________
@@ -22,32 +22,20 @@
 |                                                                               |
 '==============================================================================*/
 
-// Import database
-const connection = require('./database/connection');
+const mongoose = require('mongoose');
 
-// Import dependencies
+const connection = async() =>
+{
+    try
+    {
+        await mongoose.connect('mongodb://0.0.0.0:27017/ApiRestful_MusicMedia');
+        console.log('Database connection successfuly');
+    }
+    catch(error)
+    {
+        console.error(error);
+        throw new Error('Database connection failed...');
+    }
+}
 
-
-// Welcome message
-
-
-// Database connection
-connection();
-
-// Build node server
-
-
-// Cors configuration
-
-
-// Convert body data to js objects
-
-
-// Load routes
-
-
-// Check route
-
-
-// Put server to listen http request
-
+module.exports = connection;
