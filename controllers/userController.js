@@ -38,8 +38,17 @@ const testUser = (request, response) =>
 const registerUser = (request, response) =>
 {
      // Get params from request
+     const params = request.body;
 
      // Check params
+     if(!params.name || !params.nick || !params.email || !params.password)
+     {
+          return response.status(400).send
+          ({
+               status: 'Error',
+               message: 'Missing data...'
+          });
+     }
 
      // Validate params
 
