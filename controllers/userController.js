@@ -299,8 +299,7 @@ const updateUser = (request, response) =>
           }
 
           // Find user in database and update
-          const userUpdated = await User.findByIdAndUpdate({_id: userIdentity.id}, userToUpdate, {new: true});
-          try
+          User.findByIdAndUpdate({_id: userIdentity.id}, userToUpdate, {new: true}).then((userUpdated)=>
           {
                if(!userUpdated)
                {
@@ -318,15 +317,14 @@ const updateUser = (request, response) =>
                     message: 'Update user profile successfuly.',
                     user: userUpdated
                });
-          }
-          catch(error)
+          }).catch(() =>
           {
                return response.status(500).json
                ({
                     status: 'Error',
                     message: "Error finding user to update"
                });
-          }
+          });
      }).catch(() =>
      {
           return response.status(500).send
