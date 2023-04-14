@@ -134,8 +134,31 @@ const registerUser = (request, response) =>
      });     
 }
 
+// loginUser endpoint
+const loginUser = (request, response) =>
+{
+     // Get params from body
+
+     // Check params
+
+     // Find in database if email exists
+
+     // Check password
+
+     // Get jwt token (create service for token)
+
+     // Get user data and token
+
+     return response.status(200).send
+     ({
+          status: 'Success',
+          message: 'User login successfuly.',
+     });
+}
+
 module.exports = 
 {
      testUser,
-     registerUser
+     registerUser,
+     loginUser
 }
