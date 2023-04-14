@@ -67,8 +67,7 @@ exports.auth = (request, response, next) =>
         return response.status(404).send
         ({
             status: 'Error',
-            message: 'Invalid token.',
-            
+            message: 'Invalid token.',   
         });
     }
 

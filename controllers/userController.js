@@ -218,6 +218,7 @@ const getUserProfile = (request, response) =>
                });
           }
 
+          //return response
           return response.status(200).send
           ({
                status: 'Success',
@@ -231,11 +232,109 @@ const getUserProfile = (request, response) =>
                status: 'Error',
                message: 'Error finding user.'
           });
+     });  
+}
+
+const updateUser = (request, response) =>
+{
+     // Get user data
+     const userIdentity = request.user;
+
+     // Get data of user to update
+     const userToUpdate = request.body;
+
+     // Validate params
+     try
+     {
+          validate(userToUpdate);
+     }
+     catch(error)
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Validate failed.'
+          });
+     }
+
+     // Get if user exists in database
+     User.find
+     ({
+          $or: 
+          [
+               {email: userToUpdate.email.toLowerCase()},
+               {nick: userToUpdate.nick.toLowerCase()}
+          ]
+     }).then(async (users) =>
+     {
+          // Check if user exists and is not user identify
+          let userIsset = false;
+
+          users.forEach(user => 
+          {
+               if(user && user._id != userIdentity.id)
+               {
+                    userIsset = true;
+               }
+          })
+          // If user exists return response
+          if(userIsset)
+          {
+               return response.status(200).send
+               ({
+                    status: 'Success',
+                    message: 'User exists',
+               });
+          }
+
+          // Encode password
+          if(userToUpdate.password)
+          {
+               const pwd = await bcrypt.hash(userToUpdate.password, 10);
+               userToUpdate.password = pwd;
+          }
+          else
+          {
+               delete userToUpdate.password;
+          }
+
+          // Find user in database and update
+          const userUpdated = await User.findByIdAndUpdate({_id: userIdentity.id}, userToUpdate, {new: true});
+          try
+          {
+               if(!userUpdated)
+               {
+                    return response.status(404).json
+                    ({
+                        status: 'Error',
+                        message: "Error updating user"
+                    });
+               }
+
+               // Return response
+               return response.status(200).send
+               ({
+                    status: 'Success',
+                    message: 'Update user profile successfuly.',
+                    user: userUpdated
+               });
+          }
+          catch(error)
+          {
+               return response.status(500).json
+               ({
+                    status: 'Error',
+                    message: "Error finding user to update"
+               });
+          }
+     }).catch(() =>
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Query error.'
+          });
      });
-
-     //return response
-
-     
 }
 
 module.exports = 
@@ -243,5 +342,6 @@ module.exports =
      testUser,
      registerUser,
      loginUser,
-     getUserProfile
+     getUserProfile,
+     updateUser
 }

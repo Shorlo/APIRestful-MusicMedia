@@ -37,6 +37,7 @@ router.get('/testUser', UserController.testUser);
 router.post('/registerUser', UserController.registerUser);
 router.post('/loginUser', UserController.loginUser);
 router.get('/getUserProfile/:id', check.auth, UserController.getUserProfile);
+router.put('/updateUser', check.auth, UserController.updateUser);
 
 // Export router
 module.exports = router;
