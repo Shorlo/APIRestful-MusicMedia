@@ -25,6 +25,7 @@
 const bcrypt = require('bcrypt');
 const validate = require('../helpers/validate');
 const User = require('../models/User');
+const { param } = require('../routes/userRoutes');
 
 // Test endpoint
 const testUser = (request, response) =>
@@ -138,22 +139,68 @@ const registerUser = (request, response) =>
 const loginUser = (request, response) =>
 {
      // Get params from body
+     const params = request.body;
 
      // Check params
+     if(!params.email || !params.password)
+     {
+          return response.status(400).send
+          ({
+               status: 'Error',
+               message: 'Missing login data.'
+          });
+     }
 
-     // Find in database if email exists
+     // Find in database if email exists (need field password to check pass)
+     User.findOne({email: params.email}).select('+password').then((user) =>
+     {
+          if(!user || user.length <= 0)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'User not found.',
+               });
+          }
+          // Check password
 
-     // Check password
+          const pwd = bcrypt.compareSync(params.password, user.password);
+          if(!pwd)
+          {
+               return response.status(400).send
+               ({
+                    status: 'Error',
+                    message: 'Incorrect password.'
+               });
+          }
+          
+          // Clean userLoged without password
+          const userLoged = user.toObject();
+          delete userLoged.password;
 
-     // Get jwt token (create service for token)
+          // Get jwt token (create service for token)
 
-     // Get user data and token
 
-     return response.status(200).send
-     ({
-          status: 'Success',
-          message: 'User login successfuly.',
+          // Get user data and token
+
+
+          return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'User login successfuly.',
+               user: userLoged,
+               token: null
+          });
+     }).catch(() =>
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Error finding user.'
+          });
      });
+
+     
 }
 
 module.exports = 
