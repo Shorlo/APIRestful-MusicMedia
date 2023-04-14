@@ -22,6 +22,7 @@
 |                                                                               |
 '==============================================================================*/
 
+const bcrypt = require('bcrypt');
 const validate = require('../helpers/validate');
 const User = require('../models/User');
 
@@ -75,7 +76,7 @@ const registerUser = (request, response) =>
                {email: params.email.toLowerCase()},
                {nick: params.nick.toLowerCase()}
           ]
-     }).then((users) =>
+     }).then(async(users) =>
      {
           if(users && users.length >= 1)
           {
@@ -86,20 +87,43 @@ const registerUser = (request, response) =>
                });
           }
           // Encode password
+          let pwd = await bcrypt.hash(params.password, 10);
+          params.password = pwd;
 
           // Create User object
+          let userToSave = new User(params);
 
           // Save user in database
+          userToSave.save().then((userStored) =>
+          {
+               if(!userStored)
+               {
+                    return response.status(404).send
+                    ({
+                         status: 'Error',
+                         message: 'User to save not found'
+                    });
+               }
+               return response.status(200).send
+               ({
+                    status: 'Success',
+                    message: 'User registered successfuly.',
+                    userStored
+               });
+          }).catch(() =>
+          {
+               return response.status(500).send
+               ({
+                    status: 'Error',
+                    message: 'Save user failed.'
+               });
+          });
 
           // Clean object to return
 
           // Return response
 
-          return response.status(200).send
-          ({
-               status: 'Success',
-               message: 'User registered successfuly.'
-          });
+          
 
      }).catch(() =>
      {
