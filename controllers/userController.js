@@ -26,6 +26,7 @@ const bcrypt = require('bcrypt');
 const validate = require('../helpers/validate');
 const User = require('../models/User');
 const { param } = require('../routes/userRoutes');
+const jwt = require('../helpers/jwt');
 
 // Test endpoint
 const testUser = (request, response) =>
@@ -151,8 +152,8 @@ const loginUser = (request, response) =>
           });
      }
 
-     // Find in database if email exists (need field password to check pass)
-     User.findOne({email: params.email}).select('+password').then((user) =>
+     // Find in database if email exists (need field password to check pass) and role for generate token
+     User.findOne({email: params.email}).select('+password +role').then((user) =>
      {
           if(!user || user.length <= 0)
           {
@@ -177,19 +178,18 @@ const loginUser = (request, response) =>
           // Clean userLoged without password
           const userLoged = user.toObject();
           delete userLoged.password;
+          delete userLoged.role;
 
           // Get jwt token (create service for token)
-
+          const token = jwt.createToken(user);
 
           // Get user data and token
-
-
           return response.status(200).send
           ({
                status: 'Success',
                message: 'User login successfuly.',
                user: userLoged,
-               token: null
+               token: token
           });
      }).catch(() =>
      {
@@ -199,8 +199,6 @@ const loginUser = (request, response) =>
                message: 'Error finding user.'
           });
      });
-
-     
 }
 
 module.exports = 

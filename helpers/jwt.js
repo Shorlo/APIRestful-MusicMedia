@@ -1,4 +1,4 @@
-/*  APIRESTFUL-MUSICMEDIA/helpers/validate.js
+/*  APIRESTFUL-MUSICMEDIA/helpers/jwt.js
        ____     __           _           _____        __
       / __/_ __/ /  ___ ____(_)__  ___  / ___/__  ___/ /__
  ___ _\ \/ // / _ \/ -_) __/ / _ `/ _ \/ /__/ _ \/ _  / -_)_____________________
@@ -22,50 +22,29 @@
 |                                                                               |
 '==============================================================================*/
 
-const validator = require('validator');
+const jwt = require('jwt-simple');
+const moment = require('moment');
 
-const validate = (params) =>
+// SecretKey
+const secretKey = 'SECRET_KEY_APIRESTFUL_MUSICMEDIA_92749cjrowe6836girwe721';
+
+// Method to generate tokens
+const createToken = (user) =>
 {
-    let result = false;
-
-    let name =  !validator.isEmpty(params.name) &&
-                validator.isLength(params.name, {min: 3, max: undefined}) &&
-                /^[a-zA-Z ]*$/.test(params.name);
-
-    let nick =  !validator.isEmpty(params.nick) &&
-                validator.isLength(params.nick, {min: 2, max: 60});
-
-    let email = !validator.isEmpty(params.email) &&
-                validator.isEmail(params.email);
-
-    let password = !validator.isEmpty(params.password);
-
-    if(params.surname)
+    const payload = 
     {
-        let surname =   !validator.isEmpty(params.surname) && 
-                        validator.isLength(params.surname, {min: 3, max: undefined}) &&
-                        /^[a-zA-Z ]*$/.test(params.surname);
+        id:         user._id,
+        name:       user.name,
+        surname:    user.surname,
+        nick:       user.nick,
+        email:      user.email,
+        role:       user.role,
+        image:      user.image,
+        iat:        moment().unix(),
+        exp:        moment().add(30, 'days').unix()
+    };
 
-        if(!surname)
-        {
-            throw new Error('Error - Validation failed. Incorrect surname.');
-        }
-        else
-        {
-            console.log('Validate successfuly with surname');
-        }
-    }
-
-    if(!name || !nick || !email || !password)
-    {
-        throw new Error('Error - Validation failed.');
-    }
-    else
-    {
-        console.log('Validate successfuly');
-        result = true;
-    }
-    return result;
+    return jwt.encode(payload, secretKey);
 }
 
-module.exports = validate;
+module.exports = {secretKey, createToken};
