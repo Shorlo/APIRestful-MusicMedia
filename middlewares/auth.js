@@ -1,4 +1,4 @@
-/*  APIRESTFUL-MUSICMEDIA/routes/userRoutes.js
+/*  APIRESTFUL-MUSICMEDIA/middlewares/auth.js
        ____     __           _           _____        __
       / __/_ __/ /  ___ ____(_)__  ___  / ___/__  ___/ /__
  ___ _\ \/ // / _ \/ -_) __/ / _ `/ _ \/ /__/ _ \/ _  / -_)_____________________
@@ -22,21 +22,57 @@
 |                                                                               |
 '==============================================================================*/
 
-// Dependencies
-const express = require('express');
-const check = require('../middlewares/auth');
+const jwt = require('jwt-simple');
+const moment = require('moment');
 
-// Load router
-const router = express.Router();
+// Import secretKey
+const {secretKey} = require('../helpers/jwt');
 
-// Import controller
-const UserController = require('../controllers/userController');
+// Create middleware
+exports.auth = (request, response, next) =>
+{
+    // Check auth header
+    if(!request.headers.authorization)
+    {
+        return response.status(403).send
+        ({
+            status: 'Error',
+            message: 'The request have not authorization header.'
+        });
+    }
 
-// Define routes
-router.get('/testUser', UserController.testUser);
-router.post('/registerUser', UserController.registerUser);
-router.post('/loginUser', UserController.loginUser);
-router.get('/getUserProfile/:id', check.auth, UserController.getUserProfile);
+    // Clean token
+    let token = request.headers.authorization.replace(/['"]+/g, '');
 
-// Export router
-module.exports = router;
+    try
+    {
+        // Uncode token
+        let payload = jwt.decode(token, secretKey);
+        
+        // Check token exp date
+        if(payload.exp <= moment().unix())
+        {
+            return response.status(401).send
+            ({
+                status: 'Error',
+                message: 'Token has expired.'
+            });
+        }
+
+        // Add user data to the request
+        request.user = payload;
+    }
+    catch(error)
+    {
+        return response.status(404).send
+        ({
+            status: 'Error',
+            message: 'Invalid token.',
+            
+        });
+    }
+
+    // Ejecute action
+    next();
+}
+
