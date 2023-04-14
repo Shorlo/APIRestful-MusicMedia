@@ -85,7 +85,7 @@ const registerUser = (request, response) =>
                return response.status(200).send
                ({
                     status: 'Error',
-                    message: 'User already exists'
+                    message: 'User already exists.'
                });
           }
           // Encode password
@@ -103,7 +103,7 @@ const registerUser = (request, response) =>
                     return response.status(404).send
                     ({
                          status: 'Error',
-                         message: 'User to save not found'
+                         message: 'User to save not found.'
                     });
                }
                // Clean object to return
@@ -283,7 +283,7 @@ const updateUser = (request, response) =>
                return response.status(200).send
                ({
                     status: 'Success',
-                    message: 'User exists',
+                    message: 'User exists.',
                });
           }
 
@@ -306,7 +306,7 @@ const updateUser = (request, response) =>
                     return response.status(404).json
                     ({
                         status: 'Error',
-                        message: "Error updating user"
+                        message: "Error updating user."
                     });
                }
 
@@ -322,7 +322,7 @@ const updateUser = (request, response) =>
                return response.status(500).json
                ({
                     status: 'Error',
-                    message: "Error finding user to update"
+                    message: "Error finding user to update."
                });
           });
      }).catch(() =>
