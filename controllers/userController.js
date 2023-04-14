@@ -23,6 +23,7 @@
 '==============================================================================*/
 
 const validate = require('../helpers/validate');
+const User = require('../models/User');
 
 // Test endpoint
 const testUser = (request, response) =>
@@ -48,7 +49,7 @@ const registerUser = (request, response) =>
           return response.status(400).send
           ({
                status: 'Error',
-               message: 'Missing data...'
+               message: 'Missing data.'
           });
      }
 
@@ -66,25 +67,48 @@ const registerUser = (request, response) =>
           });
      }
 
-
      // Duplicate user control
-
-     // Encode password
-
-     // Create User object
-
-     // Save user in database
-
-     // Clean object to return
-
-     // Return response
-
-
-     return response.status(200).send
+     User.find
      ({
-          status: 'Success',
-          message: 'User registered successfuly.'
-     });
+          $or:
+          [
+               {email: params.email.toLowerCase()},
+               {nick: params.nick.toLowerCase()}
+          ]
+     }).then((users) =>
+     {
+          if(users && users.length >= 1)
+          {
+               return response.status(200).send
+               ({
+                    status: 'Error',
+                    message: 'User already exists'
+               });
+          }
+          // Encode password
+
+          // Create User object
+
+          // Save user in database
+
+          // Clean object to return
+
+          // Return response
+
+          return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'User registered successfuly.'
+          });
+
+     }).catch(() =>
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Error finding users.'
+          });
+     });     
 }
 
 module.exports = 
