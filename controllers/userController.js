@@ -38,7 +38,7 @@ const testUser = (request, response) =>
 
 // Endpoints
 
-// RegisterUser
+// registerUser endpoint
 const registerUser = (request, response) =>
 {
      // Get params from request
@@ -87,11 +87,11 @@ const registerUser = (request, response) =>
                });
           }
           // Encode password
-          let pwd = await bcrypt.hash(params.password, 10);
+          const pwd = await bcrypt.hash(params.password, 10);
           params.password = pwd;
 
           // Create User object
-          let userToSave = new User(params);
+          const userToSave = new User(params);
 
           // Save user in database
           userToSave.save().then((userStored) =>
@@ -104,11 +104,17 @@ const registerUser = (request, response) =>
                          message: 'User to save not found'
                     });
                }
+               // Clean object to return
+               const userCreated = userStored.toObject();
+               delete userCreated.password;
+               delete userCreated.role;
+               
+               // Return response
                return response.status(200).send
                ({
                     status: 'Success',
                     message: 'User registered successfuly.',
-                    userStored
+                    user: userCreated
                });
           }).catch(() =>
           {
@@ -118,13 +124,6 @@ const registerUser = (request, response) =>
                     message: 'Save user failed.'
                });
           });
-
-          // Clean object to return
-
-          // Return response
-
-          
-
      }).catch(() =>
      {
           return response.status(500).send

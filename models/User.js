@@ -45,12 +45,14 @@ const UserSchema = Schema
     password:
     {
         type: String,
-        required: true
+        required: true,
+        select: false
     },
     role:
     {
         type: String,
-        default: 'role_user'
+        default: 'role_user',
+        select: false
     },
     image:
     {
