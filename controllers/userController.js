@@ -201,9 +201,47 @@ const loginUser = (request, response) =>
      });
 }
 
+const getUserProfile = (request, response) =>
+{
+     // Get userId from url
+     const userId = request.params.id;
+
+     // Query to get user data
+     User.findById(userId).then((user) =>
+     {
+          if(!user || user.length <= 0)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'User not found.',
+               });
+          }
+
+          return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'Get user profile successfuly.',
+               user
+          });
+     }).catch(() =>
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Error finding user.'
+          });
+     });
+
+     //return response
+
+     
+}
+
 module.exports = 
 {
      testUser,
      registerUser,
-     loginUser
+     loginUser,
+     getUserProfile
 }
