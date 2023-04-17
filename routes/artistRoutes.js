@@ -24,6 +24,7 @@
 
 // Dependencies
 const express = require('express');
+const check = require('../middlewares/auth');
 
 // Load router
 const router = express.Router();
@@ -33,6 +34,8 @@ const ArtistController = require('../controllers/artistController');
 
 // Define routes
 router.get('/testArtist', ArtistController.testArtist);
+router.post('/saveArtist', check.auth, ArtistController.saveArtist);
+
 
 // Export router
 module.exports = router;

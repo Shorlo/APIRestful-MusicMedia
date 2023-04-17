@@ -35,7 +35,43 @@ const testArtist = (request, response) =>
      });
 }
 
+const saveArtist = (request, response) =>
+{
+     // Get data from body
+     const params = request.body;
+
+     // Create Artist Object to save
+     const artist = new Artist(params);
+
+     // Save Artist in database
+     artist.save().then((artistStored) =>
+     {
+          if(!artistStored)
+          {
+               return response.status(404).json
+               ({
+                    status: 'Error',
+                    message: 'Artist to stored is not exist...'
+               });
+          }
+          return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'Artist stored successfuly.',
+               artist: artistStored
+          });
+     }).catch(() =>
+     {
+          return response.status(500).json
+          ({
+               status: 'Error',
+               message: 'Artist was not saved...'
+          });
+     });
+}
+
 module.exports = 
 {
-     testArtist
+     testArtist,
+     saveArtist
 }
