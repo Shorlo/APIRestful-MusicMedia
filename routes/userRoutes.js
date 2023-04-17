@@ -25,6 +25,7 @@
 // Dependencies
 const express = require('express');
 const check = require('../middlewares/auth');
+const uploads = require('../middlewares/uploads');
 
 // Load router
 const router = express.Router();
@@ -38,6 +39,8 @@ router.post('/registerUser', UserController.registerUser);
 router.post('/loginUser', UserController.loginUser);
 router.get('/getUserProfile/:id', check.auth, UserController.getUserProfile);
 router.put('/updateUser', check.auth, UserController.updateUser);
+router.post('/uploadImage', [check.auth, uploads.single('profileImage')], UserController.uploadImage);
+
 
 // Export router
 module.exports = router;

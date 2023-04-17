@@ -351,11 +351,36 @@ const updateUser = (request, response) =>
      });
 }
 
+const uploadImage = (request, response) =>
+{
+     // Upload config
+
+
+     // Get image file and check if exists
+
+     // Get file name
+
+     // Get and check extension
+
+     // Save in database
+
+     // Return response
+
+
+     return response.status(200).send
+     ({
+          status: 'Success',
+          message: 'Upload Image successfuly.',
+          file: request.file
+     });
+}
+
 module.exports = 
 {
      testUser,
      registerUser,
      loginUser,
      getUserProfile,
-     updateUser
+     updateUser,
+     uploadImage
 }
