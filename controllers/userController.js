@@ -28,6 +28,7 @@ const User = require('../models/User');
 const { param } = require('../routes/userRoutes');
 const jwt = require('../helpers/jwt');
 const fs = require('fs');
+const path = require('path');
 
 // Test endpoint
 const testUser = (request, response) =>
@@ -352,7 +353,7 @@ const updateUser = (request, response) =>
      });
 }
 
-const uploadImage = (request, response) =>
+const uploadProfileImage = (request, response) =>
 {
      // Get image file and check if exists
      if(!request.file)
@@ -411,6 +412,40 @@ const uploadImage = (request, response) =>
      }
 }
 
+const getProfileImage = (request, response) =>
+{
+     // Get file from url params
+     const file = request.params.fileName;
+
+     // Show image path
+     const filePath = './uploads/profileImage/' + file;
+
+     // Check if file exists
+     fs.stat(filePath, (error, exists) =>
+     {
+          if(error)
+          {
+               return response.status(500).send
+               ({
+                    status: 'Error',
+                    message: 'Error checking image...'
+               });
+          }
+          if(!exists)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'File is not exists...'
+               });
+          }
+
+          // Return file
+          return response.sendFile(path.resolve(filePath)); // <-- ABSOLUTE PATH require('path')
+        
+     });
+}
+
 module.exports = 
 {
      testUser,
@@ -418,5 +453,6 @@ module.exports =
      loginUser,
      getUserProfile,
      updateUser,
-     uploadImage
+     uploadProfileImage,
+     getProfileImage
 }

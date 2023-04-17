@@ -32,6 +32,7 @@ const router = express.Router();
 
 // Import controller
 const UserController = require('../controllers/userController');
+const User = require('../models/User');
 
 // Define routes
 router.get('/testUser', UserController.testUser);
@@ -39,7 +40,8 @@ router.post('/registerUser', UserController.registerUser);
 router.post('/loginUser', UserController.loginUser);
 router.get('/getUserProfile/:id', check.auth, UserController.getUserProfile);
 router.put('/updateUser', check.auth, UserController.updateUser);
-router.post('/uploadImage', [check.auth, uploads.single('profileImage')], UserController.uploadImage);
+router.post('/uploadProfileImage', [check.auth, uploads.single('profileImage')], UserController.uploadProfileImage);
+router.get('/getProfileImage/:fileName', check.auth, UserController.getProfileImage);
 
 
 // Export router
