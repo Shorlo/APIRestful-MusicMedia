@@ -35,6 +35,7 @@ const ArtistController = require('../controllers/artistController');
 // Define routes
 router.get('/testArtist', ArtistController.testArtist);
 router.post('/saveArtist', check.auth, ArtistController.saveArtist);
+router.get('/getArtist/:id', check.auth, ArtistController.getArtist);
 
 
 // Export router

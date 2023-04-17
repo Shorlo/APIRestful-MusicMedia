@@ -70,8 +70,40 @@ const saveArtist = (request, response) =>
      });
 }
 
+const getArtist = (request, response) =>
+{
+     // Get url param
+     const artistId = request.params.id;
+
+     // Find artist in database
+     Artist.findById(artistId).then((artist) =>
+     {
+          if(!artist)
+          {
+               return response.status(404).json
+               ({
+                    status: 'Error',
+                    message: 'Artist not found.'
+               });
+          }
+          return response.status(200).send
+          ({
+               status: 'Success',
+               artist
+          });
+     }).catch(() =>
+     {
+          return response.status(500).json
+          ({
+               status: 'Error',
+               message: 'Error getting artist...'
+          });
+     });   
+}
+
 module.exports = 
 {
      testArtist,
-     saveArtist
+     saveArtist,
+     getArtist
 }
