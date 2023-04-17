@@ -27,6 +27,7 @@ const validate = require('../helpers/validate');
 const User = require('../models/User');
 const { param } = require('../routes/userRoutes');
 const jwt = require('../helpers/jwt');
+const fs = require('fs');
 
 // Test endpoint
 const testUser = (request, response) =>
@@ -353,26 +354,61 @@ const updateUser = (request, response) =>
 
 const uploadImage = (request, response) =>
 {
-     // Upload config
-
-
      // Get image file and check if exists
+     if(!request.file)
+     {
+          return response.status(404).send
+          ({
+               status: 'Error',
+               message: 'No image found.'
+          });
+     }
 
      // Get file name
-
+     const imageName = request.file.originalname;
+     
      // Get and check extension
+     const extension = imageName.split('.')[1];
+     if(extension != 'png' && extension != 'jpeg' && extension != 'jpg' && extension != 'gif' && extension != 'PNG' && extension != 'JPEG' && extension != 'JPG' && extension != 'GIF')
+     {
+          // Delete file and return response.
+          fs.unlinkSync(request.file.path);
+          return response.status(400).json
+          ({
+               status: 'Error',
+               message: 'File extension invalid...',
+          });
+     }
+     else
+     {
+          // Save in database
+          User.findOneAndUpdate({_id: request.user.id}, {image: request.file.filename}, {new: true}).then((userUpdated) =>
+          {
+               if(!userUpdated)
+               {
+                    return response.status(404).send
+                    ({
+                         status: 'Error',
+                         message: 'User to update is empty...'
+                    });
+               }
 
-     // Save in database
-
-     // Return response
-
-
-     return response.status(200).send
-     ({
-          status: 'Success',
-          message: 'Upload Image successfuly.',
-          file: request.file
-     });
+               // Return response
+               return response.status(200).send
+               ({
+                    status: 'Success',
+                    user: userUpdated,
+                    file: request.file,
+               });
+          }).catch(() =>
+          {
+               return response.status(500).send
+               ({
+                    status: 'Error',
+                    message: 'Error finding user to update...'
+               });
+          });
+     }
 }
 
 module.exports = 
