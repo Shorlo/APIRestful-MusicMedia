@@ -30,7 +30,7 @@ const connection = async() =>
     try
     {
         await mongoose.connect('mongodb://0.0.0.0:27017/ApiRestful_MusicMedia');
-        console.log('Database connection successfuly');
+        console.log('Database connection successfuly.');
     }
     catch(error)
     {

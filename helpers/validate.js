@@ -50,10 +50,6 @@ const validate = (params) =>
         {
             throw new Error('Error - Validation failed. Incorrect surname.');
         }
-        else
-        {
-            console.log('Validate successfuly with surname');
-        }
     }
 
     if(!name || !nick || !email || !password)
@@ -62,7 +58,6 @@ const validate = (params) =>
     }
     else
     {
-        console.log('Validate successfuly');
         result = true;
     }
     return result;

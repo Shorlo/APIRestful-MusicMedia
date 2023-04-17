@@ -59,7 +59,15 @@ const registerUser = (request, response) =>
      // Validate params
      try
      {
-          validate(params);
+          const validated = validate(params);
+          if(validated)
+          {
+               console.log('Validate successfuly.');
+          }
+          else
+          {
+               console.log('Validate failed.');
+          }
      }
      catch(error)
      {
@@ -246,7 +254,15 @@ const updateUser = (request, response) =>
      // Validate params
      try
      {
-          validate(userToUpdate);
+          const validated = validate(userToUpdate);
+          if(validated)
+          {
+               console.log('Validate successfuly.');
+          }
+          else
+          {
+               console.log('Validate failed.');
+          }
      }
      catch(error)
      {
