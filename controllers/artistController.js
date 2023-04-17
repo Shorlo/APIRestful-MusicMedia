@@ -22,6 +22,9 @@
 |                                                                               |
 '==============================================================================*/
 
+const Artist = require('../models/Artist');
+
+
 // Test endpoint
 const testArtist = (request, response) =>
 {
