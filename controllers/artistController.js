@@ -23,6 +23,8 @@
 '==============================================================================*/
 
 const Artist = require('../models/Artist');
+const mongoosePagination = require('mongoose-pagination');
+
 
 
 // Test endpoint
@@ -108,19 +110,32 @@ const listArtists = (request, response) =>
 
      if(request.params.page)
      {
-          page = request.params.page;
+          page = parseInt(request.params.page);
      }
 
      // Define elements per page
      const itemsPerPage = 5;
 
      // Find, order and paginate query
-     Artist.find().sort('name').then((artists) =>
+     Artist.find().sort('name').paginate(page, itemsPerPage).then(async(artists) =>
      {
+          if(!artists || artists <= 0)
+          {
+               return response.status(404).json
+               ({
+                    status: 'Error',
+                    message: 'Artists not found...'
+               });
+          }
+          const totalArtists = await Artist.countDocuments({}).exec();
+
           return response.status(200).send
           ({
                status: 'Success',
                message: 'List artists successfuly.',
+               page: page,
+               pages: Math.ceil(totalArtists/itemsPerPage),
+               total: totalArtists,
                artists
           });
      }).catch(() =>
@@ -131,9 +146,6 @@ const listArtists = (request, response) =>
                message: 'Error getting artists...'
           });
      });
-
-
-     
 }
 
 module.exports = 
