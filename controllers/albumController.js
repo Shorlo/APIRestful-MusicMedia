@@ -171,9 +171,7 @@ const updateAlbum = (request, response) =>
           return response.status(200).send
           ({
                status: 'Success',
-               message: 'Album update successfuly.',
-               albumId: albumId,
-               albumUpdated: albumUpdated
+               album: albumUpdated
           });
      }).catch(() =>
      {
