@@ -36,6 +36,7 @@ const ArtistController = require('../controllers/artistController');
 router.get('/testArtist', ArtistController.testArtist);
 router.post('/saveArtist', check.auth, ArtistController.saveArtist);
 router.get('/getArtist/:id', check.auth, ArtistController.getArtist);
+router.get('/listArtists/:page?', check.auth, ArtistController.listArtists);
 
 
 // Export router

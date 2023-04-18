@@ -101,9 +101,45 @@ const getArtist = (request, response) =>
      });   
 }
 
+const listArtists = (request, response) =>
+{
+     // Get page
+     let page = 1;
+
+     if(request.params.page)
+     {
+          page = request.params.page;
+     }
+
+     // Define elements per page
+     const itemsPerPage = 5;
+
+     // Find, order and paginate query
+     Artist.find().sort('name').then((artists) =>
+     {
+          return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'List artists successfuly.',
+               artists
+          });
+     }).catch(() =>
+     {
+          return response.status(500).json
+          ({
+               status: 'Error',
+               message: 'Error getting artists...'
+          });
+     });
+
+
+     
+}
+
 module.exports = 
 {
      testArtist,
      saveArtist,
-     getArtist
+     getArtist,
+     listArtists
 }
