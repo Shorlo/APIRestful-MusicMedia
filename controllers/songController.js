@@ -22,6 +22,8 @@
 |                                                                               |
 '==============================================================================*/
 
+const Song = require('../models/Song');
+
 // Test endpoint
 const testSong = (request, response) =>
 {
@@ -32,7 +34,47 @@ const testSong = (request, response) =>
      });
 }
 
+const saveASong = (request, response) =>
+{
+     // Get data from body
+     const params = request.body;
+
+     // Create Song object
+     const song = new Song(params);
+
+     // uploadMp3File  
+
+     // Save data in databse
+     song.save().then((songStored) =>
+     {
+          if(!songStored || songStored.length <= 0)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'Song to save not found.'
+               });
+          }
+          // Return response
+          return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'Song saved in database successfuly.',
+               song: songStored
+          });
+     }).catch(() =>
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Error saving song in database.'
+          });
+     });
+     
+}
+
 module.exports = 
 {
-     testSong
+     testSong,
+     saveASong
 }

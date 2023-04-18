@@ -24,6 +24,7 @@
 
 // Dependencies
 const express = require('express');
+const check = require('../middlewares/auth');
 
 // Load router
 const router = express.Router();
@@ -33,6 +34,8 @@ const SongController = require('../controllers/songController');
 
 // Define routes
 router.get('/testSong', SongController.testSong);
+router.post('/saveASong', check.auth, SongController.saveASong);
+
 
 // Export router
 module.exports = router;
