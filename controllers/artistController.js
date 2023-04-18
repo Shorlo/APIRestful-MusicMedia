@@ -183,11 +183,48 @@ const updateArtist = (request, response) =>
      });
 }
 
+const deleteArtist = async (request, response) =>
+{
+     // Get artistID from url
+     const artistId = request.params.id;
+
+     // Query to find and delete artist with await
+     try
+     {
+          const artistRemoved = await Artist.findByIdAndDelete(artistId);
+          
+          // Remove albums and songs
+
+          // Return response
+          return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'Artist removed successfuly.',
+               artistRemoved: artistRemoved
+          });
+     }
+     catch(error)
+     {
+          return response.status(500).json
+          ({
+               status: 'Error',
+               message: 'Error deleting artist.'
+          });
+     }
+     
+
+
+    
+
+     
+}
+
 module.exports = 
 {
      testArtist,
      saveArtist,
      getArtist,
      listArtists,
-     updateArtist
+     updateArtist,
+     deleteArtist
 }

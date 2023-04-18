@@ -43,6 +43,5 @@ router.put('/updateUser', check.auth, UserController.updateUser);
 router.post('/uploadProfileImage', [check.auth, uploads.single('profileImage')], UserController.uploadProfileImage);
 router.get('/getProfileImage/:fileName', check.auth, UserController.getProfileImage);
 
-
 // Export router
 module.exports = router;
