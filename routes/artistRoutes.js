@@ -25,6 +25,7 @@
 // Dependencies
 const express = require('express');
 const check = require('../middlewares/auth');
+const uploads = require('../middlewares/uploadsArtist');
 
 // Load router
 const router = express.Router();
@@ -39,6 +40,9 @@ router.get('/getArtist/:id', check.auth, ArtistController.getArtist);
 router.get('/listArtists/:page?', check.auth, ArtistController.listArtists);
 router.put('/updateArtist/:id', check.auth, ArtistController.updateArtist);
 router.delete('/deleteArtist/:id', check.auth, ArtistController.deleteArtist);
+router.post('/uploadArtistImage/:id', [check.auth, uploads.single('artistImage')], ArtistController.uploadArtistImage);
+router.get('/getArtistImage/:fileName', check.auth, ArtistController.getArtistImage);
+
 
 // Export router
 module.exports = router;

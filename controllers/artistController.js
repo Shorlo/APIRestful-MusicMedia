@@ -24,6 +24,8 @@
 
 const Artist = require('../models/Artist');
 const mongoosePagination = require('mongoose-pagination');
+const fs = require('fs');
+const path = require('path');
 
 
 
@@ -211,13 +213,111 @@ const deleteArtist = async (request, response) =>
                message: 'Error deleting artist.'
           });
      }
-     
-
-
-    
-
-     
 }
+
+const uploadArtistImage = (request, response) =>
+{
+     // Get artist Id
+     const artistId = request.params.id;
+     if(!artistId)
+     {
+          return response.status(404).send
+          ({
+               status: 'Error',
+               message: 'Artist not found...'
+          });
+     }
+
+     // Get image file and check if exists
+     if(!request.file)
+     {
+          return response.status(404).send
+          ({
+               status: 'Error',
+               message: 'No image found.'
+          });
+     }
+
+     // Get file name
+     const imageName = request.file.originalname;
+     
+     // Get and check extension
+     const extension = imageName.split('.')[1];
+     if(extension != 'png' && extension != 'jpeg' && extension != 'jpg' && extension != 'gif' && extension != 'PNG' && extension != 'JPEG' && extension != 'JPG' && extension != 'GIF')
+     {
+          // Delete file and return response.
+          fs.unlinkSync(request.file.path);
+          return response.status(400).json
+          ({
+               status: 'Error',
+               message: 'File extension invalid...',
+          });
+     }
+     else
+     {
+          // Save in database
+          Artist.findOneAndUpdate({_id: artistId}, {image: request.file.filename}, {new: true}).then((artistUpdated) =>
+          {
+               if(!artistUpdated)
+               {
+                    return response.status(404).send
+                    ({
+                         status: 'Error',
+                         message: 'Artist to update is empty...'
+                    });
+               }
+
+               // Return response
+               return response.status(200).send
+               ({
+                    status: 'Success',
+                    artist: artistUpdated,
+                    file: request.file,
+               });
+          }).catch(() =>
+          {
+               return response.status(500).send
+               ({
+                    status: 'Error',
+                    message: 'Error finding artst to update...'
+               });
+          });
+     }
+}
+
+const getArtistImage = (request, response) =>
+{
+     // Get file from url params
+     const file = request.params.fileName;
+
+     // Show image path
+     const filePath = './uploads/artistImage/' + file;
+
+     // Check if file exists
+     fs.stat(filePath, (error, exists) =>
+     {
+          if(error)
+          {
+               return response.status(500).send
+               ({
+                    status: 'Error',
+                    message: 'Error checking image...'
+               });
+          }
+          if(!exists)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'File is not exists...'
+               });
+          }
+
+          // Return file
+          return response.sendFile(path.resolve(filePath)); // <-- ABSOLUTE PATH require('path')
+     });
+}
+
 
 module.exports = 
 {
@@ -226,5 +326,7 @@ module.exports =
      getArtist,
      listArtists,
      updateArtist,
-     deleteArtist
+     deleteArtist,
+     uploadArtistImage,
+     getArtistImage
 }

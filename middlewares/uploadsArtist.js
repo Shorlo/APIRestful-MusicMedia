@@ -1,16 +1,18 @@
 // Multer config to upload files
 const multer = require('multer');
+
 const storage = multer.diskStorage
 ({
      destination: (request, file, cb) =>
      {
-          cb(null, './uploads/profileImage/');
+          cb(null, './uploads/artistImage/');
      },
      filename: (request, file, cb) =>
      {
-          cb(null, 'profileImage-'+Date.now()+'-'+file.originalname);
+          cb(null, 'artistImage-'+Date.now()+'-'+file.originalname);
      }
 });
+
 const uploads = multer({storage});
 
-module.exports = uploads;
+module.exports = uploads

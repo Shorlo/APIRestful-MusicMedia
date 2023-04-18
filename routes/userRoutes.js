@@ -25,14 +25,13 @@
 // Dependencies
 const express = require('express');
 const check = require('../middlewares/auth');
-const uploads = require('../middlewares/uploads');
+const uploads = require('../middlewares/uploadsUser');
 
 // Load router
 const router = express.Router();
 
 // Import controller
 const UserController = require('../controllers/userController');
-const User = require('../models/User');
 
 // Define routes
 router.get('/testUser', UserController.testUser);
