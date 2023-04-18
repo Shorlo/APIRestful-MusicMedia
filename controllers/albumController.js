@@ -107,9 +107,53 @@ const getOneAlbum = (request, response) =>
      });
 }
 
+const listAlbumByArtist = (request, response) =>
+{
+     // Get artist id from url
+     const artistId = request.params.artistId;
+
+     // Get all albums from database by artist and populate info
+     if(!artistId)
+     {
+          return response.status(404).send
+          ({
+               status: 'Error',
+               message: 'Artist not found.',
+          });
+     }
+     Album.find({artist: artistId}).populate('artist').then((albums) =>
+     {
+          if(!albums || albums <= 0)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'Albums not found.',
+               });
+          }
+          // Return response
+          return response.status(200).send
+          ({
+               status: 'Success',
+               albums: albums
+          });
+
+     }).catch(() =>
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Error getting albums from database.',
+          });
+     });
+
+     
+}
+
 module.exports = 
 {
      testAlbum,
      saveAlbum,
-     getOneAlbum
+     getOneAlbum,
+     listAlbumByArtist
 }

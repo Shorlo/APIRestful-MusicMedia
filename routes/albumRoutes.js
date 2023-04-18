@@ -36,6 +36,7 @@ const AlbumController = require('../controllers/albumController');
 router.get('/testAlbum', AlbumController.testAlbum);
 router.post('/saveAlbum', check.auth, AlbumController.saveAlbum);
 router.get('/getOneAlbum/:id', check.auth, AlbumController.getOneAlbum);
+router.get('/listAlbumsByArtist/:artistId', check.auth, AlbumController.listAlbumsByArtist);
 
 // Export router
 module.exports = router;
