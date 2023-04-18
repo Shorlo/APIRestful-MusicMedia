@@ -22,6 +22,10 @@
 |                                                                               |
 '==============================================================================*/
 
+const { request } = require('express');
+const Album = require('../models/Album');
+
+
 // Test endpoint
 const testAlbum = (request, response) =>
 {
@@ -32,7 +36,80 @@ const testAlbum = (request, response) =>
      });
 }
 
+const saveAlbum = (request, response) =>
+{
+     // Get params from body
+     const params = request.body;
+
+     // Create album object
+     const album = new Album(params);
+     
+     // Save album in database
+     album.save().then((albumStored) =>
+     {
+          if(!albumStored || albumStored <= 0)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'Album to stored not found',
+
+               });
+          }
+
+          // Return response
+          return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'Album save successfuly.',
+               album: albumStored
+          });
+     }).catch(() =>
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Error saving album in database.',
+          });
+     });
+}
+
+const getOneAlbum = (request, response) =>
+{
+     // Get albumId
+     const albumId = request.params.id;
+
+     // Find and populate artist info
+     //Album.findById(albumId).populate({path: 'artist'}).then((album) =>
+     Album.findById(albumId).populate('artist').then((album) =>
+     {
+          if(!album || album <= 0)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'Album not found.',
+               });
+          }
+          // Return response
+          return response.status(200).send
+          ({
+               status: 'Success',
+               album
+          });
+     }).catch(() =>
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Error getting album from database.',
+          });
+     });
+}
+
 module.exports = 
 {
-     testAlbum
+     testAlbum,
+     saveAlbum,
+     getOneAlbum
 }

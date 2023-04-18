@@ -23,6 +23,8 @@
 '==============================================================================*/
 
 const Artist = require('../models/Artist');
+const Album = require('../models/Album');
+const Song = require('../models/Song');
 const mongoosePagination = require('mongoose-pagination');
 const fs = require('fs');
 const path = require('path');
@@ -197,12 +199,18 @@ const deleteArtist = async (request, response) =>
           
           // Remove albums and songs
 
+          // Not working ---> long method without async await
+          const albumRemoved = await Album.findByIdAndDelete({artist: artistId});
+          const songRemoved = await Song.findByIdAndDelete({album: albumRemoved._id});
+
           // Return response
           return response.status(200).send
           ({
                status: 'Success',
                message: 'Artist removed successfuly.',
-               artistRemoved: artistRemoved
+               artistRemoved: artistRemoved,
+               albumRemoved: albumRemoved,
+               songRemoved: songRemoved
           });
      }
      catch(error)

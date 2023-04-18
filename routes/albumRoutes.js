@@ -24,6 +24,7 @@
 
 // Dependencies
 const express = require('express');
+const check = require('../middlewares/auth');
 
 // Load router
 const router = express.Router();
@@ -33,6 +34,8 @@ const AlbumController = require('../controllers/albumController');
 
 // Define routes
 router.get('/testAlbum', AlbumController.testAlbum);
+router.post('/saveAlbum', check.auth, AlbumController.saveAlbum);
+router.get('/getOneAlbum/:id', check.auth, AlbumController.getOneAlbum);
 
 // Export router
 module.exports = router;
