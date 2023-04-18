@@ -148,10 +148,46 @@ const listArtists = (request, response) =>
      });
 }
 
+const updateArtist = (request, response) =>
+{
+     // Get id params from url
+     const artistId = request.params.id;
+
+     // Get body data
+     const data = request.body;
+
+     // Find and update artists
+     Artist.findByIdAndUpdate(artistId, data, {new: true}).then((artistUpdated) =>
+     {
+          if(!artistUpdated)
+          {
+               return response.status(404).json
+               ({
+                    status: 'Error',
+                    message: 'Artist was not updated.'
+               });
+          }
+          return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'Artist updated successfuly.',
+               artist: artistUpdated
+          });
+     }).catch(() =>
+     {
+          return response.status(500).json
+          ({
+               status: 'Error',
+               message: 'Error updating artist.'
+          });
+     });
+}
+
 module.exports = 
 {
      testArtist,
      saveArtist,
      getArtist,
-     listArtists
+     listArtists,
+     updateArtist
 }

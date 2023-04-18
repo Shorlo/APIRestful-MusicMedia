@@ -37,7 +37,7 @@ router.get('/testArtist', ArtistController.testArtist);
 router.post('/saveArtist', check.auth, ArtistController.saveArtist);
 router.get('/getArtist/:id', check.auth, ArtistController.getArtist);
 router.get('/listArtists/:page?', check.auth, ArtistController.listArtists);
-
+router.put('/updateArtist/:id', check.auth, ArtistController.updateArtist);
 
 // Export router
 module.exports = router;
