@@ -47,7 +47,7 @@ const saveAlbum = (request, response) =>
      // Save album in database
      album.save().then((albumStored) =>
      {
-          if(!albumStored || albumStored <= 0)
+          if(!albumStored || albumStored.length <= 0)
           {
                return response.status(404).send
                ({
@@ -83,7 +83,7 @@ const getOneAlbum = (request, response) =>
      //Album.findById(albumId).populate({path: 'artist'}).then((album) =>
      Album.findById(albumId).populate('artist').then((album) =>
      {
-          if(!album || album <= 0)
+          if(!album || album.length <= 0)
           {
                return response.status(404).send
                ({
@@ -107,7 +107,7 @@ const getOneAlbum = (request, response) =>
      });
 }
 
-const listAlbumByArtist = (request, response) =>
+const listAlbumsByArtist = (request, response) =>
 {
      // Get artist id from url
      const artistId = request.params.artistId;
@@ -123,7 +123,7 @@ const listAlbumByArtist = (request, response) =>
      }
      Album.find({artist: artistId}).populate('artist').then((albums) =>
      {
-          if(!albums || albums <= 0)
+          if(!albums || albums.length <= 0)
           {
                return response.status(404).send
                ({
@@ -146,8 +146,43 @@ const listAlbumByArtist = (request, response) =>
                message: 'Error getting albums from database.',
           });
      });
+}
 
-     
+const updateAlbum = (request, response) =>
+{
+     // Get albumId from url
+     const albumId = request.params.id;
+
+     // Get data to update from the body
+     const data = request.body;
+
+     // Find and update
+     Album.findByIdAndUpdate(albumId, data, {new: true}).then((albumUpdated) =>
+     {
+          if(!albumUpdated || albumUpdated.length <= 0)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'Album to update not found.',
+               });
+          }
+          // Return response
+          return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'Album update successfuly.',
+               albumId: albumId,
+               albumUpdated: albumUpdated
+          });
+     }).catch(() =>
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Error updating album.',
+          });
+     });
 }
 
 module.exports = 
@@ -155,5 +190,6 @@ module.exports =
      testAlbum,
      saveAlbum,
      getOneAlbum,
-     listAlbumByArtist
+     listAlbumsByArtist,
+     updateAlbum
 }

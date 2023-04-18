@@ -37,6 +37,8 @@ router.get('/testAlbum', AlbumController.testAlbum);
 router.post('/saveAlbum', check.auth, AlbumController.saveAlbum);
 router.get('/getOneAlbum/:id', check.auth, AlbumController.getOneAlbum);
 router.get('/listAlbumsByArtist/:artistId', check.auth, AlbumController.listAlbumsByArtist);
+router.put('/updateAlbum/:id', check.auth, AlbumController.updateAlbum);
+
 
 // Export router
 module.exports = router;
