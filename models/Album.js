@@ -54,4 +54,4 @@ const AlbumSchema = Schema
      }
 });
 
-module.exports = model('Album', AlbumSchema, 'Albums');
+module.exports = model('Album', AlbumSchema, 'albums');
