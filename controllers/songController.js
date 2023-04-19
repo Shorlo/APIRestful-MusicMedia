@@ -72,8 +72,40 @@ const saveASong = (request, response) =>
      });
 }
 
+const getOneSong = (request, response) =>
+{
+     // Get url params
+     const songId = request.params.id;
+
+     // Find the song in database and album info
+     Song.findById(songId).populate('album').then((song) =>
+     {
+          if(!song || song.length <= 0)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'Song not found.'
+               });
+          }
+          return response.status(200).send
+          ({
+               status: 'Success',
+               song
+          });
+     }).catch(() =>
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Error getting song from database.'
+          });
+     });
+}
+
 module.exports = 
 {
      testSong,
-     saveASong
+     saveASong,
+     getOneSong
 }

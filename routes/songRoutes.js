@@ -35,7 +35,7 @@ const SongController = require('../controllers/songController');
 // Define routes
 router.get('/testSong', SongController.testSong);
 router.post('/saveASong', check.auth, SongController.saveASong);
-
+router.get('/getOneSong/:id', check.auth, SongController.getOneSong);
 
 // Export router
 module.exports = router;
