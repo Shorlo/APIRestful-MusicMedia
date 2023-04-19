@@ -103,9 +103,42 @@ const getOneSong = (request, response) =>
      });
 }
 
+const listSongOfAlbum = (request, response) =>
+{
+     // Get albumId
+     const albumId = request.params.albumId;
+
+     // Query of songs with album and artist info
+     Song.find({album: albumId}).populate({path: 'album', populate: {path: 'artist', model: 'Artist'}}).sort('track').then((songs) =>
+     {
+          if(!songs || songs <= 0)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'Songs not found.'
+               });
+          }
+          // Return response
+          return response.status(200).send
+          ({
+               status: 'Success',
+               songs: songs
+          });
+     }).catch(() =>
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Error getting songs from database.'
+          });
+     });
+}
+
 module.exports = 
 {
      testSong,
      saveASong,
-     getOneSong
+     getOneSong,
+     listSongOfAlbum
 }
