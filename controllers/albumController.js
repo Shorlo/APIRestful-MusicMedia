@@ -24,6 +24,7 @@
 
 const { request } = require('express');
 const Album = require('../models/Album');
+const Song = require('../models/Song');
 const fs = require('fs');
 const path = require('path');
 
@@ -288,6 +289,39 @@ const getAlbumImage = (request, response) =>
      });
 }
 
+const deleteAlbum = async (request, response) =>
+{
+     // Get Album id from params url
+     const albumId = request.params.id;
+
+     //Remove album and songs
+     try
+     {
+          const albumToRemove = await Album.findByIdAndDelete(albumId)
+          const songsToRemove = await Song.find({album: albumId});
+          songsToRemove.forEach((song) =>
+          {
+               song.deleteOne();
+          });
+
+          return response.status(200).send
+          ({
+               status: 'success',
+               message: 'Album and songs deleted successfuly',
+               albumToRemove,
+               songsToRemove
+          });
+     }
+     catch(error)
+     {
+          return response.status(500).json
+          ({
+               status: 'Error',
+               message: 'Error deleting album.'
+          });
+     }
+}
+
 module.exports = 
 {
      testAlbum,
@@ -296,5 +330,6 @@ module.exports =
      listAlbumsByArtist,
      updateAlbum,
      uploadAlbumImage,
-     getAlbumImage
+     getAlbumImage,
+     deleteAlbum
 }

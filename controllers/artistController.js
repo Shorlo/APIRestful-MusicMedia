@@ -197,11 +197,11 @@ const deleteArtist = async (request, response) =>
      {
           // Remove artist with all albums and songs
           const artistRemoved = await Artist.findByIdAndDelete(artistId);
-          const albumToRemoved = await Album.find({artist: artistId});
-          albumToRemoved.forEach(async(album) =>
+          const albumToRemove = await Album.find({artist: artistId});
+          albumToRemove.forEach(async(album) =>
           {
-               const songsToRemoved = await Song.find({album: albumToRemoved});
-               songsToRemoved.forEach((song) =>
+               const songsToRemove = await Song.find({album: albumToRemove});
+               songsToRemove.forEach((song) =>
                {
                     song.deleteOne();
                });

@@ -41,6 +41,7 @@ router.get('/listAlbumsByArtist/:artistId', check.auth, AlbumController.listAlbu
 router.put('/updateAlbum/:id', check.auth, AlbumController.updateAlbum);
 router.post('/uploadAlbumImage/:id', [check.auth, uploads.single('albumImage')], AlbumController.uploadAlbumImage);
 router.get('/getAlbumImage/:file', AlbumController.getAlbumImage);
+router.delete('/deleteAlbum/:id', check.auth, AlbumController.deleteAlbum);
 
 // Export router
 module.exports = router;
