@@ -23,6 +23,8 @@
 '==============================================================================*/
 
 const Song = require('../models/Song');
+const fs = require('fs');
+const path = require('path');
 
 // Test endpoint
 const testSong = (request, response) =>
@@ -167,11 +169,143 @@ const updateSong = (request, response) =>
                status: 'Error',
                message: 'Error updating song.'
           });
-     });
-
-     
+     }); 
 }
 
+const deleteSong = (request, response) =>
+{
+     // Get songId from url params
+     const songId = request.params.id;
+
+     // Find and remove song from database
+     Song.findByIdAndDelete(songId).then((songDeleted) =>
+     {
+          if(!songDeleted || songDeleted.length <= 0)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'Song to delete not found.'
+               });
+          }
+          // Return response
+          return response.status(200).send
+          ({
+               status: 'Success',
+               song: songDeleted
+          });
+     }).catch(() =>
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Error deleting song.'
+          });
+     });
+}
+
+const uploadMP3File = (request, response) =>
+{
+     // Get artist Id
+     const songId = request.params.id;
+     if(!songId)
+     {
+          return response.status(404).send
+          ({
+               status: 'Error',
+               message: 'Song file not found...'
+          });
+     }
+
+     // Get image file and check if exists
+     if(!request.file)
+     {
+          return response.status(404).send
+          ({
+               status: 'Error',
+               message: 'Mp3 file not found.'
+          });
+     }
+
+     // Get file name
+     const mp3FileName = request.file.originalname;
+     
+     // Get and check extension
+     const extension = mp3FileName.split('.')[1];
+     if(extension != 'mp3' && extension != 'ogg' )
+     {
+          // Delete file and return response.
+          fs.unlinkSync(request.file.path);
+          return response.status(400).json
+          ({
+               status: 'Error',
+               message: 'File extension invalid...',
+          });
+     }
+     else
+     {
+          // Save in database
+          Song.findOneAndUpdate({_id: songId}, {file: request.file.filename}, {new: true}).then((songUploaded) =>
+          {
+               if(!songUploaded || songUploaded.length <= 0)
+               {
+                    return response.status(404).send
+                    ({
+                         status: 'Error',
+                         message: 'Song to upload is empty...'
+                    });
+               }
+
+               // Return response
+               return response.status(200).send
+               ({
+                    status: 'Success',
+                    song: songUploaded,
+                    file: request.file,
+               });
+          }).catch(() =>
+          {
+               return response.status(500).send
+               ({
+                    status: 'Error',
+                    message: 'Error finding song to upload...'
+               });
+          });
+     }
+}
+
+const getMP3File = (request, response) =>
+{
+     // Get file from url params
+     const file = request.params.file;
+
+     // Show image path
+     const filePath = './uploads/songsFiles/' + file;
+
+     // Check if file exists
+     fs.stat(filePath, (error, exists) =>
+     {
+          if(error)
+          {
+               return response.status(500).send
+               ({
+                    status: 'Error',
+                    message: 'Error checking song...'
+               });
+          }
+          if(!exists)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'File is not exists...'
+               });
+          }
+
+          // Return file
+          return response.sendFile(path.resolve(filePath)); // <-- ABSOLUTE PATH require('path')
+     });
+}
 
 module.exports = 
 {
@@ -179,5 +313,8 @@ module.exports =
      saveASong,
      getOneSong,
      listSongOfAlbum,
-     updateSong
+     updateSong,
+     deleteSong,
+     uploadMP3File,
+     getMP3File
 }

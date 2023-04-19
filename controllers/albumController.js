@@ -226,14 +226,14 @@ const uploadAlbumImage = (request, response) =>
      else
      {
           // Save in database
-          Album.findOneAndUpdate({_id: albumId}, {image: request.file.filename}, {new: true}).then((albumUpdated) =>
+          Album.findOneAndUpdate({_id: albumId}, {image: request.file.filename}, {new: true}).then((albumUploaded) =>
           {
-               if(!albumUpdated || albumUpdated.length <= 0)
+               if(!albumUploaded || albumUploaded.length <= 0)
                {
                     return response.status(404).send
                     ({
                          status: 'Error',
-                         message: 'Artist to update is empty...'
+                         message: 'Album to upload is empty...'
                     });
                }
 
@@ -241,7 +241,7 @@ const uploadAlbumImage = (request, response) =>
                return response.status(200).send
                ({
                     status: 'Success',
-                    album: albumUpdated,
+                    album: albumUploaded,
                     file: request.file,
                });
           }).catch(() =>
@@ -249,7 +249,7 @@ const uploadAlbumImage = (request, response) =>
                return response.status(500).send
                ({
                     status: 'Error',
-                    message: 'Error finding artst to update...'
+                    message: 'Error finding artst to upload...'
                });
           });
      }

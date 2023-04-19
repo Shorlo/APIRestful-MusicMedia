@@ -1,4 +1,4 @@
-/*  APIRESTFUL-MUSICMEDIA/routes/songRoutes.js
+/*  APIRESTFUL-MUSICMEDIA/middlewares/uploadsSong.js
        ____     __           _           _____        __
       / __/_ __/ /  ___ ____(_)__  ___  / ___/__  ___/ /__
  ___ _\ \/ // / _ \/ -_) __/ / _ `/ _ \/ /__/ _ \/ _  / -_)_____________________
@@ -22,27 +22,21 @@
 |                                                                               |
 '==============================================================================*/
 
-// Dependencies
-const express = require('express');
-const check = require('../middlewares/auth');
-const uploads = require('../middlewares/uploadsSong');
+// Multer config to upload files
+const multer = require('multer');
 
-// Load router
-const router = express.Router();
+const storage = multer.diskStorage
+({
+     destination: (request, file, cb) =>
+     {
+          cb(null, './uploads/songsFiles/');
+     },
+     filename: (request, file, cb) =>
+     {
+          cb(null, 'songFile-'+Date.now()+'-'+file.originalname);
+     }
+});
 
-// Import controller
-const SongController = require('../controllers/songController');
+const uploads = multer({storage});
 
-// Define routes
-router.get('/testSong', SongController.testSong);
-router.post('/saveASong', check.auth, SongController.saveASong);
-router.get('/getOneSong/:id', check.auth, SongController.getOneSong);
-router.get('/listSongOfAlbum/:albumId', check.auth, SongController.listSongOfAlbum);
-router.put('/updateSong/:id', check.auth, SongController.updateSong);
-router.delete('/deleteSong/:id', check.auth, SongController.deleteSong);
-router.post('/uploadMP3File/:id', [check.auth, uploads.single('songFile')], SongController.uploadMP3File);
-router.get('/getMP3File/:file', SongController.getMP3File);
-
-
-// Export router
-module.exports = router;
+module.exports = uploads;
