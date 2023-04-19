@@ -195,22 +195,25 @@ const deleteArtist = async (request, response) =>
      // Query to find and delete artist with await
      try
      {
+          // Remove artist with all albums and songs
           const artistRemoved = await Artist.findByIdAndDelete(artistId);
-          
-          // Remove albums and songs
-
-          // Not working ---> long method without async await
-          const albumRemoved = await Album.findByIdAndDelete({artist: artistId});
-          const songRemoved = await Song.findByIdAndDelete({album: albumRemoved._id});
+          const albumToRemoved = await Album.find({artist: artistId});
+          albumToRemoved.forEach(async(album) =>
+          {
+               const songsToRemoved = await Song.find({album: albumToRemoved});
+               songsToRemoved.forEach((song) =>
+               {
+                    song.deleteOne();
+               });
+               album.deleteOne();
+          });
 
           // Return response
           return response.status(200).send
           ({
                status: 'Success',
                message: 'Artist removed successfuly.',
-               artistRemoved: artistRemoved,
-               albumRemoved: albumRemoved,
-               songRemoved: songRemoved
+               artistRemoved: artistRemoved
           });
      }
      catch(error)
@@ -325,7 +328,6 @@ const getArtistImage = (request, response) =>
           return response.sendFile(path.resolve(filePath)); // <-- ABSOLUTE PATH require('path')
      });
 }
-
 
 module.exports = 
 {

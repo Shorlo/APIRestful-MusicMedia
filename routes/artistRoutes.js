@@ -43,6 +43,5 @@ router.delete('/deleteArtist/:id', check.auth, ArtistController.deleteArtist);
 router.post('/uploadArtistImage/:id', [check.auth, uploads.single('artistImage')], ArtistController.uploadArtistImage);
 router.get('/getArtistImage/:file', check.auth, ArtistController.getArtistImage);
 
-
 // Export router
 module.exports = router;

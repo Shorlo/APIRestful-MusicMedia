@@ -43,6 +43,5 @@ router.delete('/deleteSong/:id', check.auth, SongController.deleteSong);
 router.post('/uploadMP3File/:id', [check.auth, uploads.single('songFile')], SongController.uploadMP3File);
 router.get('/getMP3File/:file', SongController.getMP3File);
 
-
 // Export router
 module.exports = router;
