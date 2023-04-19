@@ -135,10 +135,49 @@ const listSongOfAlbum = (request, response) =>
      });
 }
 
+const updateSong = (request, response) =>
+{
+     // Get songId from url params
+     const songId = request.params.id;
+
+     // Get data to update
+     const data = request.body;
+
+     // Find and update song
+     Song.findByIdAndUpdate(songId, data, {new: true}).then((songUpdated) =>
+     {
+          if(!songUpdated || songUpdated <= 0)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'Song to update not found.'
+               });
+          }
+          // Return response
+          return response.status(200).send
+          ({
+               status: 'Success',
+               song: songUpdated
+          });
+     }).catch(() =>
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Error updating song.'
+          });
+     });
+
+     
+}
+
+
 module.exports = 
 {
      testSong,
      saveASong,
      getOneSong,
-     listSongOfAlbum
+     listSongOfAlbum,
+     updateSong
 }

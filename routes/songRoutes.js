@@ -37,6 +37,7 @@ router.get('/testSong', SongController.testSong);
 router.post('/saveASong', check.auth, SongController.saveASong);
 router.get('/getOneSong/:id', check.auth, SongController.getOneSong);
 router.get('/listSongOfAlbum/:albumId', check.auth, SongController.listSongOfAlbum);
+router.put('/updateSong/:id', check.auth, SongController.updateSong);
 
 // Export router
 module.exports = router;
