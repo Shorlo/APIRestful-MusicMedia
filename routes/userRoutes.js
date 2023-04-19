@@ -40,7 +40,7 @@ router.post('/loginUser', UserController.loginUser);
 router.get('/getUserProfile/:id', check.auth, UserController.getUserProfile);
 router.put('/updateUser', check.auth, UserController.updateUser);
 router.post('/uploadProfileImage', [check.auth, uploads.single('profileImage')], UserController.uploadProfileImage);
-router.get('/getProfileImage/:fileName', check.auth, UserController.getProfileImage);
+router.get('/getProfileImage/:file', check.auth, UserController.getProfileImage);
 
 // Export router
 module.exports = router;

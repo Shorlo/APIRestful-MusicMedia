@@ -296,10 +296,10 @@ const uploadArtistImage = (request, response) =>
 const getArtistImage = (request, response) =>
 {
      // Get file from url params
-     const file = request.params.fileName;
+     const file = request.params.file;
 
      // Show image path
-     const filePath = './uploads/artistImage/' + file;
+     const filePath = './uploads/artistsImage/' + file;
 
      // Check if file exists
      fs.stat(filePath, (error, exists) =>

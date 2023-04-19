@@ -415,10 +415,10 @@ const uploadProfileImage = (request, response) =>
 const getProfileImage = (request, response) =>
 {
      // Get file from url params
-     const file = request.params.fileName;
+     const file = request.params.file;
 
      // Show image path
-     const filePath = './uploads/profileImage/' + file;
+     const filePath = './uploads/profilesImage/' + file;
 
      // Check if file exists
      fs.stat(filePath, (error, exists) =>

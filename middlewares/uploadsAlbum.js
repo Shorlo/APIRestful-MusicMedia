@@ -1,4 +1,4 @@
-/*  APIRESTFUL-MUSICMEDIA/controllers/songController.js
+/*  APIRESTFUL-MUSICMEDIA/middlewares/uploadsAlbum.js
        ____     __           _           _____        __
       / __/_ __/ /  ___ ____(_)__  ___  / ___/__  ___/ /__
  ___ _\ \/ // / _ \/ -_) __/ / _ `/ _ \/ /__/ _ \/ _  / -_)_____________________
@@ -22,58 +22,21 @@
 |                                                                               |
 '==============================================================================*/
 
-const Song = require('../models/Song');
+// Multer config to upload files
+const multer = require('multer');
 
-// Test endpoint
-const testSong = (request, response) =>
-{
-     return response.status(200).send
-     ({
-          status: 'Success',
-          message: 'Message sended from: controllers/songController.js'
-     });
-}
-
-const saveASong = (request, response) =>
-{
-     // Get data from body
-     const params = request.body;
-
-     // Create Song object
-     const song = new Song(params);
-
-     // uploadMp3File  
-
-     // Save data in databse
-     song.save().then((songStored) =>
+const storage = multer.diskStorage
+({
+     destination: (request, file, cb) =>
      {
-          if(!songStored || songStored.length <= 0)
-          {
-               return response.status(404).send
-               ({
-                    status: 'Error',
-                    message: 'Song to save not found.'
-               });
-          }
-          // Return response
-          return response.status(200).send
-          ({
-               status: 'Success',
-               message: 'Song saved in database successfuly.',
-               song: songStored
-          });
-     }).catch(() =>
+          cb(null, './uploads/albumsImage/');
+     },
+     filename: (request, file, cb) =>
      {
-          return response.status(500).send
-          ({
-               status: 'Error',
-               message: 'Error saving song in database.'
-          });
-     });
-}
+          cb(null, 'albumImage-'+Date.now()+'-'+file.originalname);
+     }
+});
 
-module.exports = 
-{
-     testSong,
-     saveASong
-}
+const uploads = multer({storage});
+
+module.exports = uploads;

@@ -24,6 +24,8 @@
 
 const { request } = require('express');
 const Album = require('../models/Album');
+const fs = require('fs');
+const path = require('path');
 
 
 // Test endpoint
@@ -183,11 +185,116 @@ const updateAlbum = (request, response) =>
      });
 }
 
+const uploadAlbumImage = (request, response) =>
+{
+     // Get artist Id
+     const albumId = request.params.id;
+     if(!albumId)
+     {
+          return response.status(404).send
+          ({
+               status: 'Error',
+               message: 'Artist not found...'
+          });
+     }
+
+     // Get image file and check if exists
+     if(!request.file)
+     {
+          return response.status(404).send
+          ({
+               status: 'Error',
+               message: 'No image found.'
+          });
+     }
+
+     // Get file name
+     const imageName = request.file.originalname;
+     
+     // Get and check extension
+     const extension = imageName.split('.')[1];
+     if(extension != 'png' && extension != 'jpeg' && extension != 'jpg' && extension != 'gif' && extension != 'PNG' && extension != 'JPEG' && extension != 'JPG' && extension != 'GIF')
+     {
+          // Delete file and return response.
+          fs.unlinkSync(request.file.path);
+          return response.status(400).json
+          ({
+               status: 'Error',
+               message: 'File extension invalid...',
+          });
+     }
+     else
+     {
+          // Save in database
+          Album.findOneAndUpdate({_id: albumId}, {image: request.file.filename}, {new: true}).then((albumUpdated) =>
+          {
+               if(!albumUpdated || albumUpdated.length <= 0)
+               {
+                    return response.status(404).send
+                    ({
+                         status: 'Error',
+                         message: 'Artist to update is empty...'
+                    });
+               }
+
+               // Return response
+               return response.status(200).send
+               ({
+                    status: 'Success',
+                    album: albumUpdated,
+                    file: request.file,
+               });
+          }).catch(() =>
+          {
+               return response.status(500).send
+               ({
+                    status: 'Error',
+                    message: 'Error finding artst to update...'
+               });
+          });
+     }
+}
+
+const getAlbumImage = (request, response) =>
+{
+     // Get file from url params
+     const file = request.params.file;
+
+     // Show image path
+     const filePath = './uploads/albumsImage/' + file;
+
+     // Check if file exists
+     fs.stat(filePath, (error, exists) =>
+     {
+          if(error)
+          {
+               return response.status(500).send
+               ({
+                    status: 'Error',
+                    message: 'Error checking image...'
+               });
+          }
+          if(!exists)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'File is not exists...'
+               });
+          }
+
+          // Return file
+          return response.sendFile(path.resolve(filePath)); // <-- ABSOLUTE PATH require('path')
+     });
+}
+
 module.exports = 
 {
      testAlbum,
      saveAlbum,
      getOneAlbum,
      listAlbumsByArtist,
-     updateAlbum
+     updateAlbum,
+     uploadAlbumImage,
+     getAlbumImage
 }
